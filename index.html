@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<title>MonacoinNodeMap</title>
+	<link rel="stylesheet" href="style.css"/>
+	<script defer src="js/three.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+	<script defer src="js/TrackballControls.js"></script>
+	<script defer src="main.js"></script>
+</head>
+<body>
+<div id="graphIcon">
+	<img src=https://2.bp.blogspot.com/-T7EgIQzy5dg/VXOTrfWCl0I/AAAAAAAAuCU/UhyYVqZ9jE8/s800/graph01_circle.png width=60 height=60 id="js-show-popup">
+</div>
+<div class="popup" id="js-popup">
+	<div class="popup-inner">
+		<div class="close-btn" id="js-close-btn">x</div>
+		<div id ="versionTable">
+			<table>
+				<thead>
+					<tr><th>Version</th><th>count</th></tr>
+				</thead>
+				<tbody id="version-table"></tbody>
+			</table>
+		</div>
+		<div id ="networkTable">
+			<table>
+				<thead>
+					<tr><th>Network</th><th>count</th></tr>
+				</thead>
+				<tbody id="network-table"></tbody>
+			</table>
+		</div>
+	</div>
+	<div class="black-background" id="js-black-bg"></div>
+</div>
+</body>
+</html>
