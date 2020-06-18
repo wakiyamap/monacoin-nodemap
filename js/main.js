@@ -12,12 +12,17 @@
 	const renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
 	// camera初期値
 	const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
+	let raycaster = new THREE.Raycaster();
+	let mouse = new THREE.Vector2();
 
 // 初期設定だぞ
 window.addEventListener('load', init);
 
 // windowサイズの変更時の対処
 window.addEventListener('resize', onResize);
+
+// プロットしたノードオブジェクトに対する衝突判定を行うためのマウスクリック位置
+window.addEventListener('click', onmousemove);
 
 function init() {
 
@@ -28,7 +33,9 @@ function init() {
 	.then(function(myJson) {
 		for(let i in myJson){
 			// 位置情報集計
-			citiesPoints.push([myJson[i][10], myJson[i][11], myJson[i][12], myJson[i][14], myJson[i][3]])
+			if (myJson[i][13] !== "TOR") {
+				citiesPoints.push([myJson[i][10], myJson[i][11], myJson[i][12], myJson[i][14], myJson[i][3]])
+			}
 			// バージョン情報カウント
 			if (versionCounts.has(myJson[i][3])) {
 				versionCounts.set(myJson[i][3], versionCounts.get(myJson[i][3]) + 1);
@@ -155,7 +162,7 @@ function createScene() {
 	function tick() {
 		requestAnimationFrame(tick);
 		 // 自転させる
-		scene.rotation.y += 0.004;
+		scene.rotation.y += 0.0005;
 		// カメラコントローラーの更新
 		controller.update();
 		renderer.render(scene, camera);
@@ -197,12 +204,12 @@ function createLand() {
  */
 function createPoint(color, latitude = 0, longitude = 0) {
 	// 円柱
-	const sphere = new THREE.Mesh(
+	const cylinderGeometry = new THREE.Mesh(
 		new THREE.CylinderGeometry(0.5, 0.5, 2),
 		new THREE.MeshBasicMaterial({color: 0xc93a40}));
 	// 緯度経度から位置を設定
-	sphere.position.copy(translateGeoCoords(latitude, longitude, 101));
-	return sphere;
+	cylinderGeometry.position.copy(translateGeoCoords(latitude, longitude, 101));
+	return cylinderGeometry;
 }
 
 /**
@@ -226,6 +233,7 @@ function translateGeoCoords(latitude, longitude, radius) {
 	return new THREE.Vector3(x, y, z);
 }
 
+// リサイズされた時に描画を更新
 function onResize() {
 	// サイズを取得
 	const width = window.innerWidth;
@@ -240,6 +248,26 @@ function onResize() {
 	camera.updateProjectionMatrix();
 }
 
+// マウスクリック位置判定
+function onmousemove(e) {
+
+    // マウス位置(3D)
+    mouse.x = ( e.clientX/window.innerWidth) *2 - 1;
+    mouse.y = - ( e.clientY/window.innerHeight)*2 + 1;
+
+	raycaster.setFromCamera(mouse, camera);
+	let intersects = raycaster.intersectObjects( scene.children );
+	console.log(mouse.x);
+	console.log(mouse.y);
+	// 背後の地球まで判定されるのでCylinderGeometryに限定させる
+	for ( let i = 0; i < intersects.length; i++ ) {
+		if (intersects[i].object.geometry.type == "CylinderGeometry") {
+			console.log(intersects[i])
+		}
+	}
+};
+
+// グラフ用popup表示
 function popupImage() {
 	const popup = document.getElementById('js-popup');
 	if(!popup) return;
