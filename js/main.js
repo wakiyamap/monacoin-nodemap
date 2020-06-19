@@ -2,7 +2,7 @@
 // 部分的に修正したり追加してます
 
 	/** ノード情報取得 **/
-	let citiesPoints = [];
+	let citiesPoints = new Map();
 	let versionCounts = new Map();
 	let asNetworkCounts = new Map();
 	let networkCounts = new Map();
@@ -12,6 +12,7 @@
 	const renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
 	// camera初期値
 	const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
+	// 衝突判定用レイヤ
 	let raycaster = new THREE.Raycaster();
 	let mouse = new THREE.Vector2();
 
@@ -34,7 +35,7 @@ function init() {
 		for(let i in myJson){
 			// 位置情報集計
 			if (myJson[i][13] !== "TOR") {
-				citiesPoints.push([myJson[i][10], myJson[i][11], myJson[i][12], myJson[i][14], myJson[i][3]])
+				citiesPoints.set(myJson[i][0]+":"+myJson[i][1], [myJson[i][10], myJson[i][11], myJson[i][12], myJson[i][14], myJson[i][3]])
 			}
 			// バージョン情報カウント
 			if (versionCounts.has(myJson[i][3])) {
@@ -95,16 +96,17 @@ function init() {
 		}
 
 		// リスト分のポイントをプロット。init対策
-		for (let i = 0; i < citiesPoints.length; i++) {
-			const latitude = citiesPoints[i][0];
-			const longitude = citiesPoints[i][1];
+		for (let [key, value] of citiesPoints.entries()) {
+			const latitude = value[0];
+			const longitude = value[1];
 			// ポイント
 			const point = createPoint(
-				i === 0
+				key === 0
 					? 0xff0000
 					: (latitude === 90 ? 0x0000FF : 0x00FF00),
 				latitude,
-				longitude);
+				longitude,
+				key);
 			scene.add(point);
 		}
 		return myJson;
@@ -132,7 +134,7 @@ function createScene() {
 	// カメラコントローラー
 	const controller = new THREE.TrackballControls(camera, renderer.domElement);
 	controller.noPan = true;
-	controller.minDistance = 200;
+	controller.minDistance = 150;
 	controller.maxDistance = 1000;
 
 	// 地球
@@ -176,10 +178,9 @@ function createScene() {
 function createSea() {
 	// 球
 	return new THREE.Mesh(
-		new THREE.SphereGeometry(98, 40, 40, 11, 11),
+		new THREE.SphereBufferGeometry(98, 40, 40, 11, 11),
 		new THREE.MeshBasicMaterial( {color: 0x00a6ed}),
 	);
-		//new THREE.MeshBasicMaterial({map: texture}));
 }
 
 /**
@@ -190,7 +191,7 @@ function createLand() {
 	// 球
 	const texture = new THREE.TextureLoader().load('https://i.imgur.com/rc98N7f.png');
 	return new THREE.Mesh(
-		new THREE.SphereGeometry(100, 40, 40),
+		new THREE.SphereBufferGeometry(100, 40, 40),
 		new THREE.MeshBasicMaterial({map: texture, alphaTest: 0.5})
 	);
 }
@@ -202,14 +203,16 @@ function createLand() {
  * @param {number} longitude
  * @returns {THREE.Mesh} 円柱
  */
-function createPoint(color, latitude = 0, longitude = 0) {
+function createPoint(color, latitude = 0, longitude = 0, locationid) {
 	// 円柱
-	const cylinderGeometry = new THREE.Mesh(
-		new THREE.CylinderGeometry(0.5, 0.5, 2),
+	const cylinderBufferGeometry = new THREE.Mesh(
+		new THREE.CylinderBufferGeometry(0.5, 0.5, 2),
 		new THREE.MeshBasicMaterial({color: 0xc93a40}));
 	// 緯度経度から位置を設定
-	cylinderGeometry.position.copy(translateGeoCoords(latitude, longitude, 101));
-	return cylinderGeometry;
+	// IP+portをLocationIDとしてnameに保管
+	cylinderBufferGeometry.name = {LocationID: locationid};
+	cylinderBufferGeometry.position.copy(translateGeoCoords(latitude, longitude, 101));
+	return cylinderBufferGeometry;
 }
 
 /**
@@ -259,10 +262,15 @@ function onmousemove(e) {
 	let intersects = raycaster.intersectObjects( scene.children );
 	console.log(mouse.x);
 	console.log(mouse.y);
-	// 背後の地球まで判定されるのでCylinderGeometryに限定させる
+	// 背後の地球まで判定されるのでCylinderBufferGeometry(円柱)に限定させる
 	for ( let i = 0; i < intersects.length; i++ ) {
-		if (intersects[i].object.geometry.type == "CylinderGeometry") {
-			console.log(intersects[i])
+		if (intersects[i].object.geometry.type == "CylinderBufferGeometry") {
+			let dom = document.getElementsByClassName("textboard-element")[0];
+			dom.innerHTML = intersects[i].object.name.LocationID+"</br>"+
+				citiesPoints.get(intersects[i].object.name.LocationID)[3]+"</br>"+
+				citiesPoints.get(intersects[i].object.name.LocationID)[4];
+			console.log(intersects[i].object.name.LocationID);
+			console.log(citiesPoints.get(intersects[i].object.name.LocationID));
 		}
 	}
 };
