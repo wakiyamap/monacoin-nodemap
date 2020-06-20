@@ -53,7 +53,7 @@ body {
 }
 
 .textboard-element {
-	margin: 2%;
+	margin: 12px;
 	white-space: nowrap;
 	overflow: hidden;
 }
@@ -67,7 +67,7 @@ body {
 	z-index: 9999;
 	opacity: 0;
 	visibility: hidden;
-	transition: .6s;
+	transition: .3s;
 }
 .popup:hover {
 	box-shadow: 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12), 0 2px 4px -1px rgba(0,0,0,.2);
@@ -77,32 +77,32 @@ body {
 	visibility: visible;
 }
 .popup-inner {
-	left: 50%;
+	position:fixed;
 	top: 1%;
+	right: 1%;
+	left: 1%;
 	bottom: 20%;
-	transform: translate(-50%);
-	width: 100%;
 	max-width: 98%;
+	z-index: 2;
+	padding: 10px;
 	color: #FFF;
 	border-radius: 5px;
 	box-shadow: 0 0 0 4px #FFF inset;
 	background-color: rgba(0,0,0,0.9);
-	position:fixed;
-	z-index: 2;
 	overflow-y: auto;
 }
 .popup-inner img {
 	width: 100%;
 }
 .close-btn{
-	font-size: 400%;
+	font-size: 200%;
 	font-weight: bold;
 	position: absolute;
 	right: 0;
 	top: 0;
-	width: 50px;
+	width: 35px;
 	height: 20px;
-	line-height: 50px;
+	line-height: 35px;
 	text-align: center;
 	cursor: pointer;
 }

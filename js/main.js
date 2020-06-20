@@ -260,8 +260,6 @@ function onmousemove(e) {
 
 	raycaster.setFromCamera(mouse, camera);
 	let intersects = raycaster.intersectObjects( scene.children );
-	console.log(mouse.x);
-	console.log(mouse.y);
 	// 背後の地球まで判定されるのでCylinderBufferGeometry(円柱)に限定させる
 	for ( let i = 0; i < intersects.length; i++ ) {
 		if (intersects[i].object.geometry.type == "CylinderBufferGeometry") {
