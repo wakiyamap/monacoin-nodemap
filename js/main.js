@@ -107,7 +107,7 @@ function init() {
 				latitude,
 				longitude,
 				key);
-			scene.add(point);
+			//scene.add(point);
 		}
 		return myJson;
 	});
@@ -204,15 +204,30 @@ function createLand() {
  * @returns {THREE.Mesh} 円柱
  */
 function createPoint(color, latitude = 0, longitude = 0, locationid) {
-	// 円柱
-	const cylinderBufferGeometry = new THREE.Mesh(
-		new THREE.CylinderBufferGeometry(0.5, 0.5, 2),
-		new THREE.MeshBasicMaterial({color: 0xc93a40}));
-	// 緯度経度から位置を設定
-	// IP+portをLocationIDとしてnameに保管
-	cylinderBufferGeometry.name = {LocationID: locationid};
-	cylinderBufferGeometry.position.copy(translateGeoCoords(latitude, longitude, 101));
-	return cylinderBufferGeometry;
+//	// 円柱
+//	const cylinderBufferGeometry = new THREE.Mesh(
+//		new THREE.CylinderBufferGeometry(0.5, 0.5, 2),
+//		new THREE.MeshBasicMaterial({color: 0xc93a40}));
+//	// 緯度経度から位置を設定
+//	// IP+portをLocationIDとしてnameに保管
+//	cylinderBufferGeometry.name = {LocationID: locationid};
+//	cylinderBufferGeometry.position.copy(translateGeoCoords(latitude, longitude, 101));
+//	return cylinderBufferGeometry;
+
+	const loader = new THREE.GLTFLoader();
+	loader.load('https://sn1.tamami-foundation.org/mona-object/scene.gltf', function (gltf) {
+		const object = gltf.scene;
+		object.name = {LocationID: locationid};
+		object.scale.set(0.25, 0.25, 0.25)
+		// IP+portをLocationIDとしてnameに保管
+		object.position.copy(translateGeoCoords(latitude, longitude, 101));
+		const ambientLight = new THREE.AmbientLight(0xFFFFFF, 1.0);
+		scene.add(ambientLight);
+		scene.add(object);
+	}, undefined, function (error) {
+		console.error( error );
+	});
+
 }
 
 /**
@@ -254,21 +269,21 @@ function onResize() {
 // マウスクリック位置判定
 function onmousemove(e) {
 
-    // マウス位置(3D)
-    mouse.x = ( e.clientX/window.innerWidth) *2 - 1;
-    mouse.y = - ( e.clientY/window.innerHeight)*2 + 1;
+	// マウス位置(3D)
+	mouse.x = ( e.clientX/window.innerWidth) *2 - 1;
+	mouse.y = - ( e.clientY/window.innerHeight)*2 + 1;
 
 	raycaster.setFromCamera(mouse, camera);
-	let intersects = raycaster.intersectObjects( scene.children );
+	let intersects = raycaster.intersectObjects(scene.children, true);
 	// 背後の地球まで判定されるのでCylinderBufferGeometry(円柱)に限定させる
 	for ( let i = 0; i < intersects.length; i++ ) {
-		if (intersects[i].object.geometry.type == "CylinderBufferGeometry") {
+		if (intersects[i].object.name == "_mona_pos_jump_fig_mona_pos_jump_fig__mona_pos_jump_figpalette1_0") {
 			let dom = document.getElementsByClassName("textboard-element")[0];
-			dom.innerHTML = intersects[i].object.name.LocationID+"</br>"+
-				citiesPoints.get(intersects[i].object.name.LocationID)[3]+"</br>"+
-				citiesPoints.get(intersects[i].object.name.LocationID)[4];
-			console.log(intersects[i].object.name.LocationID);
-			console.log(citiesPoints.get(intersects[i].object.name.LocationID));
+			dom.innerHTML = intersects[i].object.parent.parent.parent.parent.parent.parent.name.LocationID+"</br>"+
+				citiesPoints.get(intersects[i].object.parent.parent.parent.parent.parent.parent.name.LocationID)[3]+"</br>"+
+				citiesPoints.get(intersects[i].object.parent.parent.parent.parent.parent.parent.name.LocationID)[4];
+			console.log(intersects[i].object.parent.parent.parent.parent.parent.parent.name.LocationID);
+			console.log(citiesPoints.get(intersects[i].object.parent.parent.parent.parent.parent.parent.name.LocationID));
 		}
 	}
 };
