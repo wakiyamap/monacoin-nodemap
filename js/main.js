@@ -135,7 +135,7 @@ function createScene() {
 	const controller = new THREE.TrackballControls(camera, renderer.domElement);
 	controller.noPan = true;
 	controller.minDistance = 150;
-	controller.maxDistance = 1000;
+	controller.maxDistance = 10000;
 
 	// 地球
 	const sea = createSea();
@@ -217,13 +217,20 @@ function createPoint(color, latitude = 0, longitude = 0, locationid) {
 	const loader = new THREE.GLTFLoader();
 	loader.load('https://sn1.tamami-foundation.org/mona-object/scene.gltf', function (gltf) {
 		const object = gltf.scene;
-		object.name = {LocationID: locationid};
-		object.scale.set(0.25, 0.25, 0.25)
 		// IP+portをLocationIDとしてnameに保管
-		object.position.copy(translateGeoCoords(latitude, longitude, 101));
+		object.name = {LocationID: locationid};
+		// 0.25倍にobject縮小
+		object.scale.set(0.25, 0.25, 0.25);
+		// 最後の-95.8は微妙な数値にしないとバグって変な角度になるのでその調整……誰か直して
+		object.rotation.set(0.0 ,longitude * (Math.PI / 180), latitude * (Math.PI / 180) - 95.8);
+		// 緯度経度からxyz座標を計算
+		object.position.copy(translateGeoCoords(latitude, longitude, 100));
+		
 		const ambientLight = new THREE.AmbientLight(0xFFFFFF, 1.0);
 		scene.add(ambientLight);
 		scene.add(object);
+
+
 	}, undefined, function (error) {
 		console.error( error );
 	});
@@ -268,7 +275,6 @@ function onResize() {
 
 // マウスクリック位置判定
 function onmousemove(e) {
-
 	// マウス位置(3D)
 	mouse.x = ( e.clientX/window.innerWidth) *2 - 1;
 	mouse.y = - ( e.clientY/window.innerHeight)*2 + 1;
@@ -282,11 +288,11 @@ function onmousemove(e) {
 			dom.innerHTML = intersects[i].object.parent.parent.parent.parent.parent.parent.name.LocationID+"</br>"+
 				citiesPoints.get(intersects[i].object.parent.parent.parent.parent.parent.parent.name.LocationID)[3]+"</br>"+
 				citiesPoints.get(intersects[i].object.parent.parent.parent.parent.parent.parent.name.LocationID)[4];
-			console.log(intersects[i].object.parent.parent.parent.parent.parent.parent.name.LocationID);
-			console.log(citiesPoints.get(intersects[i].object.parent.parent.parent.parent.parent.parent.name.LocationID));
+			//console.log(intersects[i].object.parent.parent.parent.parent.parent.parent.name.LocationID);
+			//console.log(citiesPoints.get(intersects[i].object.parent.parent.parent.parent.parent.parent.name.LocationID));
 		}
 	}
-};
+}
 
 // グラフ用popup表示
 function popupImage() {
