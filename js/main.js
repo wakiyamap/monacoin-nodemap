@@ -135,7 +135,7 @@ function createScene() {
 	const controller = new THREE.TrackballControls(camera, renderer.domElement);
 	controller.noPan = true;
 	controller.minDistance = 150;
-	controller.maxDistance = 10000;
+	controller.maxDistance = 1000;
 
 	// 地球
 	const sea = createSea();
@@ -189,7 +189,7 @@ function createSea() {
  */
 function createLand() {
 	// 球
-	const texture = new THREE.TextureLoader().load('https://i.imgur.com/rc98N7f.png');
+	const texture = new THREE.TextureLoader().load('img/worldmap.png');
 	return new THREE.Mesh(
 		new THREE.SphereBufferGeometry(100, 40, 40),
 		new THREE.MeshBasicMaterial({map: texture, alphaTest: 0.5})

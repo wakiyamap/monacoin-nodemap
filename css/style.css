@@ -23,27 +23,33 @@ body {
 	font-family: PixelMplus;
 }
 
-.graphIcon {
+.monacoin-logo {
 	top:5%;
 	width:100%;
 	text-align:center;
 	position:fixed;
 }
 
-.graphIcon img {
+.monacoin-logo img {
 	filter: drop-shadow(0px 5px 5px #555555);
 }
 
-.graphIcon img:active {
+.monacoin-logo img:active {
 	filter: drop-shadow(0px 0px 0px #555555);
+}
 
+.github-logo {
+	bottom:14%;
+	width:99%;
+	text-align:right;
+	position:fixed;
 }
 
 .textboard {
 	bottom: 1%;
 	left: 1%;
 	right: 1%;
-	height: 100px;
+	height: 13%;
 	font-size: 1rem;
 	color: #FFF;
 	border-radius: 5px;
