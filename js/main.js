@@ -281,15 +281,13 @@ function onmousemove(e) {
 
 	raycaster.setFromCamera(mouse, camera);
 	let intersects = raycaster.intersectObjects(scene.children, true);
-	// 背後の地球まで判定されるのでCylinderBufferGeometry(円柱)に限定させる
+	// 背後の地球まで判定されるので3D Objectに限定させる
 	for ( let i = 0; i < intersects.length; i++ ) {
 		if (intersects[i].object.name == "_mona_pos_jump_fig_mona_pos_jump_fig__mona_pos_jump_figpalette1_0") {
 			let dom = document.getElementsByClassName("textboard-element")[0];
 			dom.innerHTML = intersects[i].object.parent.parent.parent.parent.parent.parent.name.LocationID+"</br>"+
 				citiesPoints.get(intersects[i].object.parent.parent.parent.parent.parent.parent.name.LocationID)[3]+"</br>"+
 				citiesPoints.get(intersects[i].object.parent.parent.parent.parent.parent.parent.name.LocationID)[4];
-			//console.log(intersects[i].object.parent.parent.parent.parent.parent.parent.name.LocationID);
-			//console.log(citiesPoints.get(intersects[i].object.parent.parent.parent.parent.parent.parent.name.LocationID));
 		}
 	}
 }
