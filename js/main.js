@@ -221,8 +221,8 @@ function createPoint(color, latitude = 0, longitude = 0, locationid) {
 		object.name = {LocationID: locationid};
 		// 0.25倍にobject縮小
 		object.scale.set(0.25, 0.25, 0.25);
-		// 最後の-95.8は微妙な数値にしないとバグって変な角度になるのでその調整……誰か直して
-		object.rotation.set(0.0 ,longitude * (Math.PI / 180), latitude * (Math.PI / 180) - 95.8);
+		// 緯度経度から回転角度を計算
+		object.rotation.set(0.0 , longitude * Math.PI / 180.0 , (270.0 + latitude) * Math.PI / 180.0);
 		// 緯度経度からxyz座標を計算
 		object.position.copy(translateGeoCoords(latitude, longitude, 100));
 		
