@@ -123,3 +123,35 @@ body {
 	z-index: 1;
 	cursor: pointer;
 }
+
+#versionTable{
+	width: 40%;
+}
+
+#versionTable td{
+	width: 10%;
+}
+#versionTable td+td{
+	width: 30%;
+	text-align: right;
+}
+
+#networkTable{
+	width: 40%;
+}
+#networkTable td{
+	width: 10%;
+}
+#networkTable td+td{
+	width: 30%;
+	text-align: right;
+}
+
+@media only screen and (max-device-width: 480px) {
+	#versionTable{
+		width: 100%;
+	}
+	#networkTable{
+		width: 100%;
+	}
+}
