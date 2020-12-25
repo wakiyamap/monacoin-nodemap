@@ -1,5 +1,5 @@
 # monacoin-nodemap
-https://monacoin-nodemap.on.fleek.co/ or https://wakiyamap.github.io/monacoin-nodemap/
+https://monacoin.nodes.directory or https://wakiyamap.github.io/monacoin-nodemap/
 
 # License
 This repository is MIT.
