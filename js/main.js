@@ -16,6 +16,12 @@
 	let raycaster = new THREE.Raycaster();
 	let mouse = new THREE.Vector2();
 
+	// animation mixer
+	let mixer;
+	let animations;
+	let clock = new THREE.Clock();
+	let runningMixer;
+
 // 初期設定だぞ
 window.addEventListener('load', init);
 
@@ -28,12 +34,13 @@ window.addEventListener('click', onmousemove);
 function init() {
 
 	fetch('https://api.mona-coin.de/nodemap/')
+	//fetch('http://192.168.100.3/one.json')
 	.then(function(response) {
 		return response.json();
 	})
 	.then(function(myJson) {
 		for(let i in myJson){
-			// 位置情報集計
+			// 位置情報集計 TORはリストからは除外
 			if (myJson[i][13] !== "TOR") {
 				citiesPoints.set(myJson[i][0]+":"+myJson[i][1], [myJson[i][10], myJson[i][11], myJson[i][12], myJson[i][14], myJson[i][3]])
 			}
@@ -168,6 +175,11 @@ function createScene() {
 		// カメラコントローラーの更新
 		controller.update();
 		renderer.render(scene, camera);
+
+		// animationの更新
+		if(mixer){
+			mixer.update(clock.getDelta());
+		}
 	}
 }
 
@@ -215,21 +227,33 @@ function createPoint(color, latitude = 0, longitude = 0, locationid) {
 //	return cylinderBufferGeometry;
 
 	const loader = new THREE.GLTFLoader();
-	loader.load('https://sn1.tamami-foundation.org/mona-object/scene.gltf', function (gltf) {
+	loader.setCrossOrigin( 'anonymous' );
+	loader.load('https://sn1.tamami-foundation.org/mona-object2/scene.gltf', function (gltf) {
 		const object = gltf.scene;
 		// IP+portをLocationIDとしてnameに保管
 		object.name = {LocationID: locationid};
 		// 0.25倍にobject縮小
-		object.scale.set(0.25, 0.25, 0.25);
+		object.scale.set(0.4, 0.4, 0.4);
 		// 緯度経度から回転角度を計算
 		object.rotation.set(0.0 , longitude * Math.PI / 180.0 , (270.0 + latitude) * Math.PI / 180.0);
 		// 緯度経度からxyz座標を計算
 		object.position.copy(translateGeoCoords(latitude, longitude, 100));
-		
-		const ambientLight = new THREE.AmbientLight(0xFFFFFF, 1.0);
-		scene.add(ambientLight);
-		scene.add(object);
 
+		// light
+		const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.015);
+
+		// lightを表示
+		scene.add(ambientLight);
+		// アニメーション動作
+		animations = gltf.animations;
+		mixer = new THREE.AnimationMixer(object);
+
+		let action = mixer.clipAction(animations[0]);
+		action.uncacheRoot;
+		action.play();
+
+		// オブジェクトを表示
+		scene.add(object);
 
 	}, undefined, function (error) {
 		console.error( error );
@@ -276,18 +300,25 @@ function onResize() {
 // マウスクリック位置判定
 function onmousemove(e) {
 	// マウス位置(3D)
-	mouse.x = ( e.clientX/window.innerWidth) *2 - 1;
-	mouse.y = - ( e.clientY/window.innerHeight)*2 + 1;
+	mouse.x = (e.clientX/window.innerWidth) *2 - 1;
+	mouse.y = - (e.clientY/window.innerHeight)*2 + 1;
 
 	raycaster.setFromCamera(mouse, camera);
 	let intersects = raycaster.intersectObjects(scene.children, true);
 	// 背後の地球まで判定されるので3D Objectに限定させる
 	for ( let i = 0; i < intersects.length; i++ ) {
-		if (intersects[i].object.name == "_mona_pos_jump_fig_mona_pos_jump_fig__mona_pos_jump_figpalette1_0") {
+		if (intersects[i].object.name == "polySurface1_lambert1_0") {
 			let dom = document.getElementsByClassName("textboard-element")[0];
-			dom.innerHTML = intersects[i].object.parent.parent.parent.parent.parent.parent.name.LocationID+"</br>"+
-				citiesPoints.get(intersects[i].object.parent.parent.parent.parent.parent.parent.name.LocationID)[3]+"</br>"+
-				citiesPoints.get(intersects[i].object.parent.parent.parent.parent.parent.parent.name.LocationID)[4];
+			dom.innerHTML = intersects[i].object.parent.parent.parent.parent.parent.parent.parent.parent.name.LocationID+"</br>"+
+				citiesPoints.get(intersects[i].object.parent.parent.parent.parent.parent.parent.parent.parent.name.LocationID)[3]+"</br>"+
+				citiesPoints.get(intersects[i].object.parent.parent.parent.parent.parent.parent.parent.parent.name.LocationID)[4];
+			object = intersects[i].object;
+			mixer.setTime(0);
+			mixer = new THREE.AnimationMixer(object);
+			let action = mixer.clipAction(animations[0]);
+			action.play();
+			// 今動き出した奴を覚えさせる
+			runningMixer = mixer;
 		}
 	}
 }
