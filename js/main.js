@@ -33,7 +33,7 @@ window.addEventListener('click', onmousemove);
 
 function init() {
 
-	fetch('https://api.mona-coin.de/nodemap/')
+	fetch('https://seeds.tamami-foundation.org/map_plot.json')
 	//fetch('http://192.168.100.3/one.json')
 	.then(function(response) {
 		return response.json();
