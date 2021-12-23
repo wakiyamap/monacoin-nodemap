@@ -1,5 +1,13 @@
 # monacoin-nodemap
-https://monacoin.nodes.directory or https://wakiyamap.github.io/monacoin-nodemap/
+・https://monacoin.nodes.directory/
+
+・https://monacoin-nodemap.on.fleek.co/
+
+・https://wakiyamap.github.io/monacoin-nodemap/
+
+# seeder data
+Modify and use data from seeder
+https://github.com/wakiyamap/resolve_seeder_dump
 
 # License
 This repository is MIT.
