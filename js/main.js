@@ -228,7 +228,7 @@ function createPoint(color, latitude = 0, longitude = 0, locationid) {
 
 	const loader = new THREE.GLTFLoader();
 	loader.setCrossOrigin( 'anonymous' );
-	loader.load('https://storageapi.fleek.co/wakiyamap-team-bucket/mona-object/scene.gltf', function (gltf) {
+	loader.load('https://storage.wakiyamap.dev/wakiyamap-team-bucket/mona-object/scene.gltf', function (gltf) {
 		const object = gltf.scene;
 		// IP+portをLocationIDとしてnameに保管
 		object.name = {LocationID: locationid};
