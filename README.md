@@ -1,8 +1,6 @@
 # monacoin-nodemap
 ・https://monacoin.nodes.directory/
 
-・https://monacoin-nodemap.on.fleek.co/
-
 ・https://wakiyamap.github.io/monacoin-nodemap/
 
 # seeder data
