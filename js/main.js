@@ -228,7 +228,7 @@ function createPoint(color, latitude = 0, longitude = 0, locationid) {
 
 	const loader = new THREE.GLTFLoader();
 	loader.setCrossOrigin( 'anonymous' );
-	loader.load('https://storage.wakiyamap.dev/wakiyamap-team-bucket/mona-object/scene.gltf', function (gltf) {
+	loader.load('https://peaceful-leopon-ifqm2.lighthouseweb3.xyz/ipfs/bafybeidppu6qwy7k4pchsp4kw5ocd4t4pf6svglq3pm3pas5v5xzh4jilm/scene.gltf', function (gltf) {
 		const object = gltf.scene;
 		// IP+portをLocationIDとしてnameに保管
 		object.name = {LocationID: locationid};
